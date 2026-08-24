@@ -183,8 +183,14 @@ export function Carousel({ projects }: { projects: SlideProject[] }) {
           onClickCapture={onClickCapture}
           // The negative margin cancels the outer half-gutters contributed by
           // the slides' padding, so the first and last visible cards align with
-          // the content container rather than sitting 29px inside it.
-          className={`flex lg:-mx-[29px] ${dragOffset === 0 ? 'transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]' : ''}`}
+          // the content container rather than sitting a gutter inside it. It has
+          // to match `px-4 lg:px-7.25` on ProjectSlide at every breakpoint: the
+          // pair is what keeps a step's travel equal to one card plus one
+          // gutter, so a mismatch shows up as slides drifting out of register.
+          // Even 1px out shaves a visible sliver off the leading card, which is
+          // why the odd-looking 7.25 (29px, the Figma half-gutter) is kept
+          // rather than rounded to 7.
+          className={`flex -mx-4 lg:-mx-7.25 ${dragOffset === 0 ? 'transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]' : ''}`}
           style={{
             transform: `translate3d(calc(${offsetPercent}% + ${dragOffset}px), 0, 0)`,
             // Let the browser own vertical panning; we only claim horizontal.

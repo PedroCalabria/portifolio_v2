@@ -19,10 +19,18 @@ export type SlideProject = Project & {
  * featured card's 3.1:1 — at half the width that ratio would letterbox the
  * image into a strip.
  *
- * The 58px gutter between cards comes from padding on the slide, not `gap`:
- * `gap` would widen the flex line and break the carousel's translate maths,
- * padding does not. The track cancels the outer half-gutters with a negative
- * margin so the cards still line up with the content container's edges.
+ * The gutter between cards comes from padding on the slide, not `gap`: `gap`
+ * would widen the flex line and break the carousel's translate maths, padding
+ * does not. The track cancels the outer half-gutters with a negative margin of
+ * the same size, so the cards still line up with the content container's edges
+ * — the two values have to move together or the alignment drifts.
+ *
+ * One-up needs a gutter as much as two-up does, even though nothing sits beside
+ * the card at rest. Without one the outgoing and incoming cards travel flush
+ * against each other, and two 20px radii meeting mid-transition read as one
+ * pinched shape rather than two cards. 32px is enough separation at phone
+ * widths without opening a chasm; the 58px of the Figma's two-up layout takes
+ * over at `lg`.
  *
  * `inert` is what keeps off-screen slides out of the tab order and out of the
  * accessibility tree — a carousel that lets you tab into invisible content is
@@ -31,7 +39,7 @@ export type SlideProject = Project & {
 export function ProjectSlide({ project, active }: { project: SlideProject; active: boolean }) {
   return (
     <div
-      className="w-full shrink-0 basis-full lg:basis-1/2 lg:px-[29px]"
+      className="w-full shrink-0 basis-full px-4 lg:basis-1/2 lg:px-7.25"
       // `inert` is the part that matters: it takes the slide's links and
       // buttons out of the tab order. aria-hidden alone would leave them
       // focusable, which is worse than having no carousel at all.

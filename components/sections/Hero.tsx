@@ -57,13 +57,41 @@ export function Hero() {
 
           {/* Presentational: a glance at the stack, not a set of links. */}
           <h2 className="sr-only">{dict.hero.techLabel}</h2>
-          <ul className="flex flex-wrap items-center justify-center gap-x-12 gap-y-4 opacity-50">
-            {dict.hero.tech.map((tech) => (
-              <li key={tech} className="text-body-lg font-semibold">
-                {tech}
-              </li>
-            ))}
-          </ul>
+
+          {/* The strip is capped at the hero's own measure so the stack lines up
+              with the copy above it rather than spanning the full container.
+              That cap is what the marquee needs to be read as motion: the list
+              has to be wider than the window it travels through, or the loop
+              shows daylight between the two copies. Six entries at this size
+              clear it comfortably; trimming the list to two or three would not.
+
+              `overflow-x-auto` under reduced motion is not decoration. A
+              stopped marquee keeps whatever did not fit permanently offscreen,
+              so the strip becomes scrollable instead of animated and the
+              content stays reachable. */}
+          <div className="mx-auto w-full max-w-[468px] overflow-hidden opacity-50 mask-(--marquee-mask) motion-reduce:overflow-x-auto">
+            <div className="flex w-max animate-marquee motion-reduce:animate-none">
+              {/* Rendered twice: the travel is one copy wide, so the second
+                  slides into the gap the first leaves behind. Only the first is
+                  real content — the clone is a visual continuation, and a
+                  screen reader listing the stack twice would just be wrong. */}
+              {[false, true].map((isClone) => (
+                <ul
+                  key={String(isClone)}
+                  aria-hidden={isClone || undefined}
+                  className={`flex shrink-0 items-center gap-x-12 pe-12 ${
+                    isClone ? 'motion-reduce:hidden' : ''
+                  }`}
+                >
+                  {dict.hero.tech.map((tech) => (
+                    <li key={tech} className="text-body-lg font-semibold whitespace-nowrap">
+                      {tech}
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+          </div>
         </Reveal>
       </Container>
     </section>

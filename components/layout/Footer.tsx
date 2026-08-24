@@ -19,7 +19,7 @@ export function Footer() {
       <Container>
         <Divider />
 
-        <div className="flex flex-col gap-10 py-12 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex gap-10 py-12 flex-row items-start justify-between">
           <a
             href="#top"
             aria-label={dict.wordmark.homeLabel}

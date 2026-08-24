@@ -53,6 +53,26 @@
   --reveal-duration: 1000ms;
   --reveal-stagger: 80ms;
   --reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Tech marquee. One pass of the whole track, so raising the duration slows
+     the strip down without touching anything else. `linear` is not a stylistic
+     choice: any easing would make a loop that is meant to be endless visibly
+     accelerate and brake once per cycle. */
+  --animate-marquee: marquee 20s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      /* The track holds two copies of the list, so half its width is exactly
+         one copy — the seam lands where the first copy began and the loop has
+         no visible restart. Each copy carries its own trailing gap for this
+         reason; a `gap` on the track would sit outside the 50% and the seam
+         would drift by half a gutter. */
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -80,6 +100,11 @@
     color-mix(in srgb, var(--color-paper) 10%, transparent) 0%,
     transparent 100%
   );
+
+  /* Edge fade for the tech marquee. Without it the strip's own boundary slices
+     whichever word is crossing it clean in half, which reads as a clipping bug
+     rather than as motion. Black is arbitrary — a mask only reads alpha. */
+  --marquee-mask: linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
 
   /* Approximation of the Figma NOISE effect (monotone, size 2, density 0.3).
      Generated inline so it costs no network request and no binary asset. */

@@ -36,7 +36,7 @@ export const en = {
     primaryCta: 'Let’s Chat',
     secondaryCta: 'See My projects',
     techLabel: 'Technologies I work with',
-    tech: ['React', '.NET', 'NodeJS', 'SQL', 'GitHub', 'NextJS'],
+    tech: ['React', '.NET', 'NodeJS', 'SQL', 'Postgres', 'Prisma', 'GitHub', 'NextJS', 'AI Integration', 'TypeScript', 'JavaScript', 'TailwindCSS', 'Shadcn', 'Docker', 'Kafka', 'Python'],
   },
 
   services: {

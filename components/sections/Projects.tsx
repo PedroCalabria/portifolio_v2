@@ -24,7 +24,7 @@ export function Projects() {
   }))
 
   return (
-    <section id="projects" data-anchor className="py-24">
+    <section id="projects" data-anchor className="py-20">
       <Container>
         <SectionHeading
           eyebrow={dict.projects.eyebrow}

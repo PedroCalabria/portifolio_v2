@@ -10,13 +10,13 @@ import { getDictionary } from '@/lib/locale'
 
 const dict = getDictionary()
 
-const PORTRAIT = '/about/portrait.jpg'
+const PORTRAIT = '/about/portrait.avif'
 
 export function About() {
   const portraitPresent = assetExists(PORTRAIT)
 
   return (
-    <section id="about" data-anchor className="relative isolate overflow-x-clip py-24">
+    <section id="about" data-anchor className="relative isolate overflow-x-clip py-20">
       <Glow className="left-1/2 top-1/3 h-[711px] w-[1165px] max-w-none -translate-x-1/2" />
 
       <Container>
@@ -36,7 +36,7 @@ export function About() {
                   src={PORTRAIT}
                   alt={dict.about.photoAlt}
                   present={portraitPresent}
-                  sizes="(min-width: 1024px) 341px, 100vw"
+                  sizes="341px"
                 />
               </div>
             </div>
@@ -77,10 +77,13 @@ export function About() {
                     <p className="mt-1 text-body font-normal text-paper/80">
                       {entry.role} | {entry.period}
                     </p>
-                    <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-                      {entry.stack.map((tech) => (
-                        <li key={tech} className="text-body font-bold">
+                    <ul className="mt-2 flex flex-wrap gap-x-2 gap-y-1">
+                      {entry.stack.map((tech, index) => (
+                        <li key={tech} className="flex gap-2 text-body font-bold">
                           {tech}
+                          {index < entry.stack.length - 1 && (
+                            <span className="mx-1 text-paper/80">|</span>
+                          )}
                         </li>
                       ))}
                     </ul>

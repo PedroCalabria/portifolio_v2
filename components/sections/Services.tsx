@@ -10,7 +10,7 @@ const dict = getDictionary()
 
 export function Services() {
   return (
-    <section id="services" data-anchor className="relative isolate overflow-x-clip py-24">
+    <section id="services" data-anchor className="relative isolate overflow-x-clip py-20">
       <Glow className="left-1/2 top-1/4 h-[529px] w-[1165px] max-w-none -translate-x-1/2" />
 
       <Container>
