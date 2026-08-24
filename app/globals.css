@@ -1,0 +1,176 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Design tokens — extracted from figma.json, frame "PÁGINA PRINCIPAL".
+   Nothing outside this block should introduce a raw colour, size or radius.
+--------------------------------------------------------------------------- */
+@theme {
+  /* Palette */
+  --color-ink: #1a1a1a; /* page background, and label on light pills */
+  --color-paper: #ffffff; /* foreground */
+  --color-primary: #244fff; /* CTAs, contact icon circles, accent words */
+  --color-eyebrow: #7792ff; /* section eyebrows, focus ring */
+  --color-bullet: #3e65ff; /* experience timeline bullets */
+  --color-placeholder: #d9d9d9; /* absent imagery */
+  --color-void: #060606; /* hero gradient stop */
+
+  /* Type scale. Urbanist everywhere except --text-ordinal (Work Sans). */
+  --font-sans: var(--font-urbanist), ui-sans-serif, system-ui, sans-serif;
+  --font-ordinal: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --text-display: 4.25rem; /* 68 */
+  --text-display--line-height: 4.5rem; /* 72 */
+  --text-h2: 3rem; /* 48 */
+  --text-h2--line-height: 3.625rem; /* 58 */
+  --text-h3: 2rem; /* 32 */
+  --text-h3--line-height: 2.375rem; /* 38 */
+  --text-ordinal: 1.75rem; /* 28 — Work Sans */
+  --text-ordinal--line-height: 2.0625rem; /* 33 */
+  --text-lead: 1.375rem; /* 22 */
+  --text-lead--line-height: 1.625rem; /* 26 */
+  --text-body-lg: 1.25rem; /* 20 */
+  --text-body-lg--line-height: 1.5rem; /* 24 */
+  --text-label: 1.125rem; /* 18 */
+  --text-label--line-height: 1.375rem; /* 22 */
+  --text-body: 1rem; /* 16 */
+  --text-body--line-height: 1.1875rem; /* 19 */
+
+  --tracking-eyebrow: 0.6em; /* 10.8px at 18px */
+
+  /* Radii */
+  --radius-pill: 100px;
+  --radius-card: 20px;
+
+  /* Layout. The 1120px container is the declared Figma grid: 12 columns of
+     71.33 + 11 gutters of 24. It replaces the 1058px and 981px widths that
+     the drawn layers happen to use. */
+  --container-content: 1120px;
+  --spacing-gutter: 80px; /* container padding, matches the grid offset */
+  --spacing-header: 60px; /* header height, and anchor scroll offset */
+
+  /* Reveal animation */
+  --reveal-distance: 24px;
+  --reveal-duration: 1000ms;
+  --reveal-stagger: 80ms;
+  --reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   Non-theme tokens: values consumed by hand-written CSS rather than by
+   Tailwind utility generation.
+--------------------------------------------------------------------------- */
+:root {
+  /* Gradient divider stroke, used horizontally and vertically. */
+  --divider-h: linear-gradient(
+    to right,
+    transparent 0%,
+    color-mix(in srgb, var(--color-paper) 50%, transparent) 53%,
+    transparent 100%
+  );
+  --divider-v: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--color-paper) 50%, transparent) 53%,
+    transparent 100%
+  );
+
+  /* Radial glow: #FFFFFF at 10% fading to transparent. */
+  --glow: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--color-paper) 10%, transparent) 0%,
+    transparent 100%
+  );
+
+  /* Approximation of the Figma NOISE effect (monotone, size 2, density 0.3).
+     Generated inline so it costs no network request and no binary asset. */
+  --texture-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    /* Nothing in the design bleeds sideways; this keeps decorative glows
+       from ever producing a horizontal scrollbar. */
+    overflow-x: clip;
+  }
+
+  /* Tailwind v4 preflight sets buttons to cursor: default. The design brief
+     requires a pointer on everything activatable — and explicitly not on
+     anything disabled. */
+  a[href],
+  button:not(:disabled),
+  summary,
+  label[for],
+  select,
+  input[type='checkbox'],
+  input[type='radio'] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-eyebrow);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Section anchors clear the sticky header. Derived from the same token as
+     the header's own height so the two cannot drift apart. */
+  :target,
+  [data-anchor] {
+    scroll-margin-top: calc(var(--spacing-header) + 2rem);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll reveal.
+
+   The resting state is the default: `[data-reveal="pending"]` carries no
+   styles of its own, so server-rendered HTML sits at its final position and a
+   visitor without JavaScript — or a crawler — sees finished content.
+
+   The hidden state only exists once a synchronous inline script has set
+   `data-reveal-armed` on <html>, which happens before the first paint and only
+   when the visitor has not asked for reduced motion. That ordering is what
+   keeps content from being painted and then snatched away.
+--------------------------------------------------------------------------- */
+@layer components {
+  [data-reveal] {
+    transition:
+      opacity var(--reveal-duration) var(--reveal-ease),
+      transform var(--reveal-duration) var(--reveal-ease);
+    transition-delay: calc(var(--reveal-index, 0) * var(--reveal-stagger));
+  }
+
+  html[data-reveal-armed] [data-reveal='pending'] {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-distance), 0);
+  }
+}
